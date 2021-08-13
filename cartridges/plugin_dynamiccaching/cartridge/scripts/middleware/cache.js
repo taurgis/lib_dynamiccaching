@@ -20,6 +20,8 @@ base.applyDynamicInventorySensitiveCache = function (req, res, next) {
         res.cachePeriod = hoursToCache;
         res.cachePeriodUnit = 'hours';
         res.personalizedByPricePromotion = true;
+
+        res.getViewData().calculatedCacheHours = hoursToCache;
     }
 
     next();

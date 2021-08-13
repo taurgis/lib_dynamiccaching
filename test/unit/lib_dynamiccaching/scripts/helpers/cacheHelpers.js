@@ -2,7 +2,6 @@
 'use strict';
 
 const expect = require('chai').expect;
-const sinon = require('sinon');
 
 require('app-module-path').addPath(process.cwd() + '/cartridges');
 
@@ -14,8 +13,8 @@ describe('Sentry Service', () => {
     beforeEach(() => {
         productStub = {
             activeData: {
-                unitsWeek: null,
-                unitsMonth: null
+                salesVelocityWeek: null,
+                salesVelocityMonth: null
             },
             isVariant: () => false,
             isVariationGroup: () => false,
@@ -111,19 +110,19 @@ describe('Sentry Service', () => {
 
     it('should return a value for a standard product when active data is available.', () => {
         productStub.activeData = {
-          unitsWeek: 150,
-          unitsMonth: 300
+            salesVelocityWeek: 1,
+            salesVelocityMonth: 1
         };
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(13);
+        expect(result).to.equal(15);
     });
 
     it('should return the maximum value if the calculated hours is higher than that with Active Data taken into account for week and month..', () => {
         productStub.activeData = {
-            unitsWeek: 20,
-            unitsMonth: 100
+            salesVelocityWeek: 0.5,
+            salesVelocityMonth: 0.3
         };
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
@@ -131,10 +130,10 @@ describe('Sentry Service', () => {
         expect(result).to.equal(cacheHelpers.LONG_CACHE_TIME);
     });
 
-    it('should return the maximum value if the calculated hours is higher than that with Active Data taken into account for week and month..', () => {
+    it('should return the minimum value if the calculated hours is lower than that with Active Data taken into account for week and month..', () => {
         productStub.activeData = {
-            unitsWeek: 1000,
-            unitsMonth: 10000
+            salesVelocityWeek: 30,
+            salesVelocityMonth: 30
         };
 
         productStub.availabilityModel.timeToOutOfStock = 0.2;
@@ -146,8 +145,8 @@ describe('Sentry Service', () => {
 
     it('should not use the custom week & month calculation if the inventory record is missing.', () => {
         productStub.activeData = {
-            unitsWeek: 1,
-            unitsMonth: 2
+            salesVelocityWeek: 1,
+            salesVelocityMonth: 2
         };
 
         productStub.availabilityModel.inventoryRecord = null;

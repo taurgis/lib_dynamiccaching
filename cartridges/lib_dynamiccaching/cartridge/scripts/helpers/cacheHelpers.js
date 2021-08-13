@@ -17,19 +17,17 @@ var ACTIVE_HOURS_IN_DAY = 14;
  * @returns {null|number} - The amount of hours to cache a page or component related to the product
  */
 function calculateWeekAndMonthBasedCacheTime(dwProduct) {
-    var nWeeklyUnitsSold = dwProduct.activeData.unitsWeek;
-    var nMonthlyUnitsSold = dwProduct.activeData.unitsMonth;
+    var nSalesVelocityWeek = dwProduct.activeData.salesVelocityWeek;
+    var nSalesVelocityMonth = dwProduct.activeData.salesVelocityMonth;
 
-    if (!nWeeklyUnitsSold || !nMonthlyUnitsSold) return null;
+    if (!nSalesVelocityWeek || !nSalesVelocityMonth) return null;
 
     var oInventoryRecord = dwProduct.availabilityModel.inventoryRecord;
 
     if (!oInventoryRecord) return null;
 
     var nATS = oInventoryRecord.ATS;
-    var nExpectedUnitsSoldPerHour = (
-        ((nWeeklyUnitsSold / 7) / ACTIVE_HOURS_IN_DAY) + ((nMonthlyUnitsSold / 30) / ACTIVE_HOURS_IN_DAY)
-    ) / 2;
+    var nExpectedUnitsSoldPerHour = (nSalesVelocityWeek + nSalesVelocityMonth) / 2;
 
     return nATS / nExpectedUnitsSoldPerHour;
 }
