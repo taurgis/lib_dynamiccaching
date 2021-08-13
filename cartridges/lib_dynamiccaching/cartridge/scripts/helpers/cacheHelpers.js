@@ -35,13 +35,14 @@ function calculateProductCacheTime(dwProduct) {
      * fall back to default values.
      */
     if (!dwAvailabilityModel.isOrderable() || (iTimeToOutOfStock === 0)) {
-        return STOCK_LEVELS_CHANGE_OFTEN ? SHORT_CACHE_TIME : LONG_CACHE_TIME;
+        return FALLBACK_CACHE_TIME;
     }
 
-    return Math.min(LONG_CACHE_TIME, Math.max(1, Math.floor(iTimeToOutOfStock)));
+    return Math.min(LONG_CACHE_TIME, Math.max(SHORT_CACHE_TIME, Math.floor(iTimeToOutOfStock)));
 }
 
 module.exports = {
     calculateProductCacheTime: calculateProductCacheTime,
-    FALLBACK_CACHE_TIME: FALLBACK_CACHE_TIME
+    FALLBACK_CACHE_TIME: FALLBACK_CACHE_TIME,
+    SHORT_CACHE_TIME: SHORT_CACHE_TIME
 };
