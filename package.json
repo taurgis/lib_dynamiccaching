@@ -4,6 +4,7 @@
     "description": "Salesforce Commerce Cloud B2C library to allow dynamic caching based on different parameters.",
     "main": "index.js",
     "scripts": {
+        "test": "sgmf-scripts --test test/unit/**/*.js",
         "lint": "sgmf-scripts --lint js && sgmf-scripts --lint css",
         "upload": "sgmf-scripts --upload -- ",
         "uploadCartridge": "sgmf-scripts --uploadCartridge plugin_filternavigation",

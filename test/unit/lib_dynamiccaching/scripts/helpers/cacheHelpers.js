@@ -13,11 +13,20 @@ let productStub;
 describe('Sentry Service', () => {
     beforeEach(() => {
         productStub = {
+            activeData: {
+                unitsWeek: null,
+                unitsMonth: null
+            },
             isVariant: () => false,
             isVariationGroup: () => false,
+            isMaster: () => false,
+            isProduct: () => true,
             availabilityModel: {
                 isOrderable: () => true,
-                timeToOutOfStock: 10
+                timeToOutOfStock: 10,
+                inventoryRecord: {
+                    ATS: 20
+                }
             }
         }
     });
@@ -70,6 +79,7 @@ describe('Sentry Service', () => {
         productStub.isVariant = () => true;
         productStub.variationModel = {
             master: {
+                isMaster: () => true,
                 availabilityModel: {
                     isOrderable: () => true,
                     timeToOutOfStock: 12
@@ -86,6 +96,7 @@ describe('Sentry Service', () => {
         productStub.isVariationGroup = () => true;
         productStub.variationModel = {
             master: {
+                isMaster: () => true,
                 availabilityModel: {
                     isOrderable: () => true,
                     timeToOutOfStock: 15
@@ -96,5 +107,53 @@ describe('Sentry Service', () => {
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
         expect(result).to.equal(productStub.variationModel.master.availabilityModel.timeToOutOfStock);
+    });
+
+    it('should return a value for a standard product when active data is available.', () => {
+        productStub.activeData = {
+          unitsWeek: 150,
+          unitsMonth: 300
+        };
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(13);
+    });
+
+    it('should return the maximum value if the calculated hours is higher than that with Active Data taken into account for week and month..', () => {
+        productStub.activeData = {
+            unitsWeek: 20,
+            unitsMonth: 100
+        };
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(cacheHelpers.LONG_CACHE_TIME);
+    });
+
+    it('should return the maximum value if the calculated hours is higher than that with Active Data taken into account for week and month..', () => {
+        productStub.activeData = {
+            unitsWeek: 1000,
+            unitsMonth: 10000
+        };
+
+        productStub.availabilityModel.timeToOutOfStock = 0.2;
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(cacheHelpers.SHORT_CACHE_TIME);
+    });
+
+    it('should not use the custom week & month calculation if the inventory record is missing.', () => {
+        productStub.activeData = {
+            unitsWeek: 1,
+            unitsMonth: 2
+        };
+
+        productStub.availabilityModel.inventoryRecord = null;
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(productStub.availabilityModel.timeToOutOfStock);
     });
 });
