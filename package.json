@@ -1,0 +1,55 @@
+{
+    "name": "lib_dynamiccaching",
+    "version": "6.0.0",
+    "description": "Salesforce Commerce Cloud B2C library to allow dynamic caching based on different parameters.",
+    "main": "index.js",
+    "scripts": {
+        "lint": "sgmf-scripts --lint js && sgmf-scripts --lint css",
+        "upload": "sgmf-scripts --upload -- ",
+        "uploadCartridge": "sgmf-scripts --uploadCartridge plugin_filternavigation",
+        "compile:js": "sgmf-scripts --compile js",
+        "compile:scss": "sgmf-scripts --compile css",
+        "build": "npm run compile:js && npm run compile:scss",
+        "watch": "sgmf-scripts --watch"
+    },
+    "repository": {
+        "url": "https://github.com/taurgis/lib_dynamiccaching"
+    },
+    "license": "MIT License",
+    "author": {
+        "email": "thomas.theunen@forward.eu",
+        "name": "Thomas Theunen"
+    },
+    "devDependencies": {
+        "app-module-path": "^2.2.0",
+        "chai": "^4.3.0",
+        "chai-subset": "^1.6.0",
+        "css-loader": "^0.28.11",
+        "eslint": "^7.20.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-sitegenesis": "~1.0.0",
+        "husky": "^4.3.8",
+        "isml-linter": "^5.30.3",
+        "mocha": "^8.3.0",
+        "proxyquire": "1.7.11",
+        "request-promise": "^4.2.4",
+        "sass-loader": "^7.3.1",
+        "sgmf-scripts": "^2.4.1",
+        "sinon": "^9.2.4"
+    },
+    "browserslist": [
+        "last 2 versions",
+        "ie >= 10"
+    ],
+    "paths": {
+        "base": "../storefront-reference-architecture/cartridges/app_storefront_base/"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run lint",
+            "pre-push": "npm run test"
+        }
+    },
+    "dependencies": {}
+}
