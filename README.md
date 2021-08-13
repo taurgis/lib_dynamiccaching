@@ -1,6 +1,6 @@
 # lib_dynamiccaching: Storefront Reference Architecture (SFRA)
 
-This is the repository for the lib_dynamiccaching plugin. This plugin adds Sentry Monitoring, including
+This is the repository for the lib_dynamiccaching plugin. This plugin adds dynamic page caching, including
 the following capabilities:
 
 * Dynamic stock based cache timings, based on Active Data
