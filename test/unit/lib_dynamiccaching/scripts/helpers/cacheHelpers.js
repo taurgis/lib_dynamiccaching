@@ -1,15 +1,13 @@
-
 'use strict';
 
 const expect = require('chai').expect;
 
 require('app-module-path').addPath(process.cwd() + '/cartridges');
 
-
 const cacheHelpers = require('lib_dynamiccaching/cartridge/scripts/helpers/cacheHelpers');
 let productStub;
 
-describe('Sentry Service', () => {
+describe('Dynamic Caching', () => {
     beforeEach(() => {
         productStub = {
             activeData: {
