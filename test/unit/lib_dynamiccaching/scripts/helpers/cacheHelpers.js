@@ -73,6 +73,10 @@ describe('Dynamic Caching', () => {
                 availabilityModel: {
                     isOrderable: () => true,
                     timeToOutOfStock: 12
+                },
+                activeData: {
+                    salesVelocityWeek: null,
+                    salesVelocityMonth: null
                 }
             }
         };
@@ -90,7 +94,11 @@ describe('Dynamic Caching', () => {
                 availabilityModel: {
                     isOrderable: () => true,
                     timeToOutOfStock: 15
-                }
+                },
+                activeData: {
+                    salesVelocityWeek: null,
+                    salesVelocityMonth: null
+                },
             }
         };
 

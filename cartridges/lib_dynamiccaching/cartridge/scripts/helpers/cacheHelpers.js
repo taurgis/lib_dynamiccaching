@@ -65,6 +65,9 @@ function calculateProductCacheTime(dwProduct) {
      * Calculate the time we should cache based on the Active Data
      */
     var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
+    /**
+     * Calculate on the long term on the passed product to get a good mix if we are working with variants.
+     */
     var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);
 
     if (nTimeToCacheBasedOnLongerTimePeriod) {
