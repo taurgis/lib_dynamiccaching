@@ -1,7 +1,7 @@
 'use strict';
 
 var oDynamicCacheConfig = require('../../config/dynamic-caching.json');
-var FALLBACK_CACHE_TIME = oDynamicCacheConfig.stockLevelsChangeOften ? oDynamicCacheConfig.shortCacheTime : oDynamicCacheConfig.longCacheTime;
+var FALLBACK_CACHE_TIME = oDynamicCacheConfig.inventoryLevelsChangeOften ? oDynamicCacheConfig.shortCacheTime : oDynamicCacheConfig.longCacheTime;
 
 /**
  * Calculate the optimal time the product can be cached based on inventory level and purchase history taking into account

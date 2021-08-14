@@ -25,6 +25,38 @@ For information on Getting Started with SFRA,
 see [Get Started with SFRA](https://documentation.b2c.commercecloud.salesforce.com/DOC1/index.jsp?topic=%2Fcom.demandware.dochelp%2Fcontent%2Fb2c_commerce%2Ftopics%2Fsfra%2Fb2c_sfra_setup.html)
 .
 
+# Configuration
+
+You can find the config file `dynamic-caching.json` in the lib_dynamiccaching cartridge.
+
+## stockLevelsChangeOften
+With this configuration file, you can manipulate the fallback cache time when Active Data is missing or unavailable.
+
+* **_true_**: Your inventory changes often, possibly every hour, which means a short caching period is required if we can not take active Data into account.
+* **_false_**: Your inventory only gets imported once a day
+
+**Default value:** `false`
+
+## activeHoursInDay
+The standard Active Data keeps into account the total 24 hours of the day. But I have been told that people tend to sleep during some of these hours. This setting changes the 24 hours calculation to the specified amount of hours.
+
+**Default value:** `14`
+
+## shortCacheTime
+The shortest caching time that you want to allow. And it is also used to choose a fallback value if Active Data is unavailable.
+
+**Default value:** `1`
+
+## longCacheTime
+The longest caching time that you want to allow. And it is also used to choose a fallback value if Active Data is unavailable.
+
+**Default value:** `24`
+
+## modifiers
+By default, all periods in Active Data carry the same weight in the calculation. You can use this configuration to modify that behavior.
+
+**Default value:** `1`
+
 # Release management
 
 # NPM scripts

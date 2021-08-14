@@ -1,5 +1,5 @@
 {
-  "stockLevelsChangeOften": false,
+  "inventoryLevelsChangeOften": false,
   "activeHoursInDay": 14,
   "shortCacheTime": 1,
   "longCacheTime": 24,
