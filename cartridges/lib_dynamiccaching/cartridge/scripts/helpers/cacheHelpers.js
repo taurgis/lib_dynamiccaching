@@ -17,8 +17,8 @@ var ACTIVE_HOURS_IN_DAY = 14;
  * @returns {null|number} - The amount of hours to cache a page or component related to the product
  */
 function calculateWeekAndMonthBasedCacheTime(dwProduct) {
-    var nSalesVelocityWeek = dwProduct.activeData.salesVelocityWeek;
-    var nSalesVelocityMonth = dwProduct.activeData.salesVelocityMonth;
+    var nSalesVelocityWeek = dwProduct.activeData.salesVelocityWeek / (ACTIVE_HOURS_IN_DAY / 24);
+    var nSalesVelocityMonth = dwProduct.activeData.salesVelocityMonth / (ACTIVE_HOURS_IN_DAY / 24);
 
     if (!nSalesVelocityWeek || !nSalesVelocityMonth) return null;
 
@@ -65,7 +65,6 @@ function calculateProductCacheTime(dwProduct) {
     }
 
     var nTimeToCacheBasedOnPreviousDay = Math.min(LONG_CACHE_TIME, Math.max(SHORT_CACHE_TIME, Math.floor(iTimeToOutOfStock)));
-
     if ((dwProductToUse.isMaster() && !dwProduct.isMaster())
         || (!dwProductToUse.isMaster() && dwProductToUse.isProduct())) {
         var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);

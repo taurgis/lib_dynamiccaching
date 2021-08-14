@@ -106,13 +106,13 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(15);
+        expect(result).to.equal(10);
     });
 
     it('should return the maximum value if the calculated value is higher.', () => {
         productStub.activeData = {
-            salesVelocityWeek: 0.5,
-            salesVelocityMonth: 0.3
+            salesVelocityWeek: 0.3,
+            salesVelocityMonth: 0.2
         };
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
@@ -167,7 +167,7 @@ describe('Dynamic Caching', () => {
 
     it('Scenario: High Sales with high stock.', () => {
         productStub.activeData = {
-            salesVelocityWeek: 50, // 50 results in 4 hours
+            salesVelocityWeek: 50,
             salesVelocityMonth: 50
         };
 
@@ -181,12 +181,12 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(6);
+        expect(result).to.equal(5);
     });
 
     it('Scenario: High Sales with low stock.', () => {
         productStub.activeData = {
-            salesVelocityWeek: 50, // 50 results in 0.2 hours
+            salesVelocityWeek: 50,
             salesVelocityMonth: 50
         };
 
@@ -211,7 +211,7 @@ describe('Dynamic Caching', () => {
 
         productStub.availabilityModel = {
             isOrderable: () => true,
-            timeToOutOfStock: 50,
+            timeToOutOfStock: 30,
             inventoryRecord: {
                 ATS: 4
             }
@@ -219,7 +219,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(22);
+        expect(result).to.equal(17);
     });
 
     it('Scenario: Medium Sales with low stock.', () => {
@@ -238,7 +238,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(5);
+        expect(result).to.equal(4);
     });
 
     it('Scenario: Medium Sales with medium stock.', () => {
@@ -257,7 +257,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(24);
+        expect(result).to.equal(23);
     });
 
     it('Scenario: Medium Sales with high stock.', () => {
