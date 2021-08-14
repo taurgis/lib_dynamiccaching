@@ -61,17 +61,16 @@ function calculateProductCacheTime(dwProduct) {
         return FALLBACK_CACHE_TIME;
     }
 
+    /**
+     * Calculate the time we should cache based on the Active Data
+     */
     var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
+    var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);
 
-    if ((dwProductToUse.isMaster() && !dwProduct.isMaster())
-        || (!dwProductToUse.isMaster() && dwProductToUse.isProduct())) {
-        var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);
+    if (nTimeToCacheBasedOnLongerTimePeriod) {
+        var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
 
-        if (nTimeToCacheBasedOnLongerTimePeriod) {
-            var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
-
-            return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache));
-        }
+        return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache));
     }
 
     return nTimeToCacheBasedOnPreviousDay;
