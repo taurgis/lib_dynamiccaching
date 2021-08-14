@@ -3,7 +3,10 @@
 This is the repository for the lib_dynamiccaching plugin. This plugin adds dynamic page caching, including
 the following capabilities:
 
-* Dynamic stock based cache timings, based on Active Data
+* Dynamic stock based cache timings, based on Active Data (Sales Velocity)
+
+![Sales Velocity](docs/salesvelocity.png)
+
 
 # Cartridge Path Considerations
 
