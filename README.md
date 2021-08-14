@@ -1,6 +1,6 @@
 # lib_dynamiccaching: Storefront Reference Architecture (SFRA)
 
-**<span style="color:red">This is an experimental project at the moment, and has not been tested on production yet! Use at your own discretion!</span>**
+>**<span style="color:red">This is an experimental project at the moment, and has not been tested on production yet! Use at your own discretion!</span>**
 
 This is the repository for the lib_dynamiccaching plugin. This plugin adds dynamic page caching, including
 the following capabilities:
