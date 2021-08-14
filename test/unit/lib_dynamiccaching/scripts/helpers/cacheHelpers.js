@@ -118,7 +118,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.longCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime);
     });
 
     it('should return the minimum value if the calculated hours is lower the minimum.', () => {
@@ -131,7 +131,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.shortCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.minCacheTime);
     });
 
     it('should not use the custom week & month calculation if the inventory record is missing.', () => {
@@ -163,7 +163,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.longCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime);
     });
 
     it('Scenario: High Sales with high stock.', () => {

@@ -35,8 +35,8 @@ You can find the config file `dynamic-caching.json` in the lib_dynamiccaching ca
 {
    "inventoryLevelsChangeOften": false,
    "activeHoursInDay": 14,
-   "shortCacheTime": 1,
-   "longCacheTime": 24,
+   "minCacheTime": 1,
+   "maxCacheTime": 24,
    "modifiers": {
       "day": 1,
       "week": 1,
@@ -58,12 +58,12 @@ The standard Active Data keeps into account the total 24 hours of the day. But I
 
 **Default value:** `14`
 
-## shortCacheTime
+## minCacheTime
 The shortest caching time that you want to allow. And it is also used to choose a fallback value if Active Data is unavailable.
 
 **Default value:** `1`
 
-## longCacheTime
+## maxCacheTime
 The longest caching time that you want to allow. And it is also used to choose a fallback value if Active Data is unavailable.
 
 **Default value:** `24`

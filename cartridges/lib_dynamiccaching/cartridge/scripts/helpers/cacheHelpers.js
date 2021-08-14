@@ -1,7 +1,7 @@
 'use strict';
 
 var oDynamicCacheConfig = require('../../config/dynamic-caching.json');
-var FALLBACK_CACHE_TIME = oDynamicCacheConfig.inventoryLevelsChangeOften ? oDynamicCacheConfig.shortCacheTime : oDynamicCacheConfig.longCacheTime;
+var FALLBACK_CACHE_TIME = oDynamicCacheConfig.inventoryLevelsChangeOften ? oDynamicCacheConfig.minCacheTime : oDynamicCacheConfig.maxCacheTime;
 
 /**
  * Calculate the optimal time the product can be cached based on inventory level and purchase history taking into account
@@ -61,7 +61,7 @@ function calculateProductCacheTime(dwProduct) {
         return FALLBACK_CACHE_TIME;
     }
 
-    var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.longCacheTime, Math.max(oDynamicCacheConfig.shortCacheTime, Math.floor(iTimeToOutOfStock)));
+    var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
 
     if ((dwProductToUse.isMaster() && !dwProduct.isMaster())
         || (!dwProductToUse.isMaster() && dwProductToUse.isProduct())) {
@@ -70,7 +70,7 @@ function calculateProductCacheTime(dwProduct) {
         if (nTimeToCacheBasedOnLongerTimePeriod) {
             var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
 
-            return Math.min(oDynamicCacheConfig.longCacheTime, Math.max(oDynamicCacheConfig.shortCacheTime, nAverageTimeToCache));
+            return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache));
         }
     }
 
