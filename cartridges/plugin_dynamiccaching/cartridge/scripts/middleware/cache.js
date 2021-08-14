@@ -10,6 +10,8 @@ var base = module.superModule;
  * @param {Function} next - Next call in the middleware chain.
  */
 base.applyDynamicInventorySensitiveCache = function (req, res, next) {
+    var start = new Date();
+
     var cacheHelpers = require('*/cartridge/scripts/helpers/cacheHelpers');
     var oProduct = res.getViewData().product;
 
@@ -23,6 +25,8 @@ base.applyDynamicInventorySensitiveCache = function (req, res, next) {
 
         res.getViewData().calculatedCacheHours = hoursToCache;
     }
+
+    res.getViewData().calculatedCacheHoursPerformanceImpact = new Date() - start;
 
     next();
 };

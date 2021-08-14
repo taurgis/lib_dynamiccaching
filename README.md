@@ -79,7 +79,7 @@ By default, all periods in Active Data carry the same weight in the calculation.
 # Product Details Template
 The product details page has only been overwritten to add a data-attribute on the main `<div>` for debugging purposes.
 
-![Debug Caching](docs/img.png)
+![Cache debugging](docs/img.png)
 
 # Release management
 

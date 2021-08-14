@@ -14,7 +14,10 @@
     <iscomment>
         Added a data element on the product-detail wrapper for debugging purposes.
     </iscomment>
-    <div class="container product-detail product-wrapper" data-pid="${product.id}" data-calculated-cache-hours="${pdict.calculatedCacheHours}">
+    <div class="container product-detail product-wrapper" data-pid="${product.id}"
+         data-calculatedcachehoursperformance="${pdict.calculatedCacheHours}"
+         data-calculatedcachehoursperformanceimpact="${pdict.calculatedCacheHoursPerformanceImpact}ms"
+    >
         <div class="row">
             <div class="col-12">
                 <!--Breadcrumbs-->
