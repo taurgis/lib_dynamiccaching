@@ -29,6 +29,22 @@ see [Get Started with SFRA](https://documentation.b2c.commercecloud.salesforce.c
 
 You can find the config file `dynamic-caching.json` in the lib_dynamiccaching cartridge.
 
+### Example
+
+```json
+{
+   "inventoryLevelsChangeOften": false,
+   "activeHoursInDay": 14,
+   "shortCacheTime": 1,
+   "longCacheTime": 24,
+   "modifiers": {
+      "day": 1,
+      "week": 1,
+      "month": 1
+   }
+}
+```
+
 ## stockLevelsChangeOften
 With this configuration file, you can manipulate the fallback cache time when Active Data is missing or unavailable.
 
