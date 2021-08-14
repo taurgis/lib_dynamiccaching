@@ -5,6 +5,7 @@ const expect = require('chai').expect;
 require('app-module-path').addPath(process.cwd() + '/cartridges');
 
 const cacheHelpers = require('lib_dynamiccaching/cartridge/scripts/helpers/cacheHelpers');
+const oDynamicCacheConfig = require('lib_dynamiccaching/cartridge/config/dynamic-caching');
 let productStub;
 
 describe('Dynamic Caching', () => {
@@ -117,7 +118,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(cacheHelpers.LONG_CACHE_TIME);
+        expect(result).to.equal(oDynamicCacheConfig.longCacheTime);
     });
 
     it('should return the minimum value if the calculated hours is lower the minimum.', () => {
@@ -130,7 +131,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(cacheHelpers.SHORT_CACHE_TIME);
+        expect(result).to.equal(oDynamicCacheConfig.shortCacheTime);
     });
 
     it('should not use the custom week & month calculation if the inventory record is missing.', () => {
@@ -162,7 +163,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(cacheHelpers.LONG_CACHE_TIME);
+        expect(result).to.equal(oDynamicCacheConfig.longCacheTime);
     });
 
     it('Scenario: High Sales with high stock.', () => {

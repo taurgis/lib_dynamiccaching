@@ -1,12 +1,7 @@
 'use strict';
 
-// Set to true if stock levels are updated multiple times a day.
-var STOCK_LEVELS_CHANGE_OFTEN = false;
-var SHORT_CACHE_TIME = 1;
-var LONG_CACHE_TIME = 24;
-var FALLBACK_CACHE_TIME = STOCK_LEVELS_CHANGE_OFTEN ? SHORT_CACHE_TIME : LONG_CACHE_TIME;
-// The amount of hours shoppers are active on a site (lets not take nights into account, unless that is your business)
-var ACTIVE_HOURS_IN_DAY = 14;
+var oDynamicCacheConfig = require('../../config/dynamic-caching.json');
+var FALLBACK_CACHE_TIME = oDynamicCacheConfig.stockLevelsChangeOften ? oDynamicCacheConfig.shortCacheTime : oDynamicCacheConfig.longCacheTime;
 
 /**
  * Calculate the optimal time the product can be cached based on inventory level and purchase history taking into account
@@ -17,8 +12,10 @@ var ACTIVE_HOURS_IN_DAY = 14;
  * @returns {null|number} - The amount of hours to cache a page or component related to the product
  */
 function calculateWeekAndMonthBasedCacheTime(dwProduct) {
-    var nSalesVelocityWeek = dwProduct.activeData.salesVelocityWeek / (ACTIVE_HOURS_IN_DAY / 24);
-    var nSalesVelocityMonth = dwProduct.activeData.salesVelocityMonth / (ACTIVE_HOURS_IN_DAY / 24);
+    var nSalesVelocityWeek = (dwProduct.activeData.salesVelocityWeek / (oDynamicCacheConfig.activeHoursInDay / 24))
+        * oDynamicCacheConfig.modifiers.week;
+    var nSalesVelocityMonth = (dwProduct.activeData.salesVelocityMonth / (oDynamicCacheConfig.activeHoursInDay / 24))
+        * oDynamicCacheConfig.modifiers.month;
 
     if (!nSalesVelocityWeek || !nSalesVelocityMonth) return null;
 
@@ -54,7 +51,7 @@ function calculateProductCacheTime(dwProduct) {
     }
 
     var dwAvailabilityModel = dwProductToUse.availabilityModel;
-    var iTimeToOutOfStock = dwAvailabilityModel.timeToOutOfStock;
+    var iTimeToOutOfStock = dwAvailabilityModel.timeToOutOfStock / oDynamicCacheConfig.modifiers.day;
 
     /**
      * If the product is not available for ordering or the time to out of stock is incalculable or 0,
@@ -64,7 +61,8 @@ function calculateProductCacheTime(dwProduct) {
         return FALLBACK_CACHE_TIME;
     }
 
-    var nTimeToCacheBasedOnPreviousDay = Math.min(LONG_CACHE_TIME, Math.max(SHORT_CACHE_TIME, Math.floor(iTimeToOutOfStock)));
+    var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.longCacheTime, Math.max(oDynamicCacheConfig.shortCacheTime, Math.floor(iTimeToOutOfStock)));
+
     if ((dwProductToUse.isMaster() && !dwProduct.isMaster())
         || (!dwProductToUse.isMaster() && dwProductToUse.isProduct())) {
         var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);
@@ -72,7 +70,7 @@ function calculateProductCacheTime(dwProduct) {
         if (nTimeToCacheBasedOnLongerTimePeriod) {
             var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
 
-            return Math.min(LONG_CACHE_TIME, Math.max(SHORT_CACHE_TIME, nAverageTimeToCache));
+            return Math.min(oDynamicCacheConfig.longCacheTime, Math.max(oDynamicCacheConfig.shortCacheTime, nAverageTimeToCache));
         }
     }
 
@@ -81,7 +79,5 @@ function calculateProductCacheTime(dwProduct) {
 
 module.exports = {
     calculateProductCacheTime: calculateProductCacheTime,
-    FALLBACK_CACHE_TIME: FALLBACK_CACHE_TIME,
-    SHORT_CACHE_TIME: SHORT_CACHE_TIME,
-    LONG_CACHE_TIME: LONG_CACHE_TIME
+    FALLBACK_CACHE_TIME: FALLBACK_CACHE_TIME
 };

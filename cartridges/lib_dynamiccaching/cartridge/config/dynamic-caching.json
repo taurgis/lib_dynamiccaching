@@ -1,0 +1,11 @@
+{
+  "stockLevelsChangeOften": false,
+  "activeHoursInDay": 14,
+  "shortCacheTime": 1,
+  "longCacheTime": 24,
+  "modifiers": {
+    "day": 1,
+    "week": 1,
+    "month": 1
+  }
+}
