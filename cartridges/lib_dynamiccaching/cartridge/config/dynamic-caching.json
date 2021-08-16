@@ -3,6 +3,7 @@
   "activeHoursInDay": 14,
   "minCacheTime": 1,
   "maxCacheTime": 24,
+  "promotionInfluence": 0.5,
   "modifiers": {
     "day": 1,
     "week": 1,

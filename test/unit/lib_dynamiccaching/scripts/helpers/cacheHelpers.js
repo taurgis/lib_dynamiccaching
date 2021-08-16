@@ -1,10 +1,29 @@
 'use strict';
 
 const expect = require('chai').expect;
-
+const proxyquire = require('proxyquire').noCallThru();
 require('app-module-path').addPath(process.cwd() + '/cartridges');
 
-const cacheHelpers = require('lib_dynamiccaching/cartridge/scripts/helpers/cacheHelpers');
+const lPromotions =  [];
+
+const cacheHelpers = proxyquire('lib_dynamiccaching/cartridge/scripts/helpers/cacheHelpers', {
+    'dw/campaign/PromotionMgr': {
+        getActivePromotions: () => {
+            return {
+                getProductPromotionsForDiscountedProduct: () => {
+                    return {
+                        iterator: () => {
+                            return {
+                                hasNext: () => lPromotions.length > 0,
+                                next: () => lPromotions.shift()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
 const oDynamicCacheConfig = require('lib_dynamiccaching/cartridge/config/dynamic-caching');
 let productStub;
 
@@ -46,7 +65,29 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(Math.floor(productStub.availabilityModel.timeToOutOfStock));
+        expect(result).to.equal(10);
+    });
+
+    it('should take into account promotions.', () => {
+        productStub.availabilityModel.timeToOutOfStock = 10;
+        lPromotions.push({
+            startDate: new Date()
+        });
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(5);
+    });
+
+    it('should not take into account promotions that did not start today.', () => {
+        productStub.availabilityModel.timeToOutOfStock = 10;
+        lPromotions.push({
+            startDate: new Date(2021, 1, 1)
+        });
+
+        const result = cacheHelpers.calculateProductCacheTime(productStub);
+
+        expect(result).to.equal(10);
     });
 
     it('should return the fallback value if the "Time To Out Of Stock" is 0.', () => {

@@ -42,6 +42,7 @@ You can find the config file `dynamic-caching.json` in the lib_dynamiccaching ca
    "activeHoursInDay": 14,
    "minCacheTime": 1,
    "maxCacheTime": 24,
+   "promotionInfluence": 0.5,
    "modifiers": {
       "day": 1,
       "week": 1,
@@ -72,6 +73,15 @@ The shortest caching time that you want to allow. And it is also used to choose 
 The longest caching time that you want to allow. And it is also used to choose a fallback value if Active Data is unavailable.
 
 **Default value:** `24`
+
+## promotionInfluence
+When a promotion has been activated on the current day, by which amount should the caching time be reduced.
+
+e.g. The calculation deems that based on Active Data 8 hours caching should be good, but since a promotion was activated today 4 hours might be better.
+
+**Minimum:** `0`, **Maximum** `1`
+
+**Default value:** `0.5` (50%)
 
 ## modifiers
 By default, all periods in Active Data carry the same weight in the calculation. You can use this configuration to modify that behavior.

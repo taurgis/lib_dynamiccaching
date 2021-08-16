@@ -4,6 +4,35 @@ var oDynamicCacheConfig = require('../../config/dynamic-caching.json');
 var FALLBACK_CACHE_TIME = oDynamicCacheConfig.inventoryLevelsChangeOften ? oDynamicCacheConfig.minCacheTime : oDynamicCacheConfig.maxCacheTime;
 
 /**
+ * Check if there are promotions active on the product that we need to take into account with the velocity.
+ *
+ * @param {dw.catalog.Product} oProduct - The product
+ * @return {boolean} - True if we need to keep in mind promotions
+ */
+function isInfluencedByPromotions(oProduct) {
+    var PromotionMgr = require('dw/campaign/PromotionMgr');
+    var lActivePromotions = PromotionMgr.getActivePromotions().getProductPromotionsForDiscountedProduct(oProduct).iterator();
+
+    while (lActivePromotions.hasNext()) {
+        var oCurentPromotion = lActivePromotions.next();
+        var dPromotionStartDate = oCurentPromotion.startDate || oCurentPromotion.campaign.startDate || oCurentPromotion.campaign.lastModified;
+
+        if (dPromotionStartDate) {
+            var dCurrentDate = new Date();
+
+            if (dPromotionStartDate.getFullYear() === dCurrentDate.getFullYear()
+                && dPromotionStartDate.getMonth() === dCurrentDate.getMonth()
+                && dPromotionStartDate.getDate() === dCurrentDate.getDate()) {
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
  * Calculate the optimal time the product can be cached based on inventory level and purchase history taking into account
  * the past week and month active data.
  *
@@ -72,14 +101,15 @@ function calculateProductCacheTime(dwProduct) {
      * Calculate on the long term on the passed product to get a good mix.
      */
     var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProductToUse, dwAvailabilityModel.inventoryRecord);
+    var nPromotionInfluence = isInfluencedByPromotions(dwProductToUse) ? oDynamicCacheConfig.promotionInfluence : 1;
 
     if (nTimeToCacheBasedOnLongerTimePeriod) {
-        var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
+        var nAverageTimeToCache = Math.floor(((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2) * nPromotionInfluence);
 
         return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache));
     }
 
-    return nTimeToCacheBasedOnPreviousDay;
+    return nTimeToCacheBasedOnPreviousDay * nPromotionInfluence;
 }
 
 module.exports = {
