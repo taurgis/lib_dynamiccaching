@@ -12,8 +12,8 @@ describe('Dynamic Caching', () => {
     beforeEach(() => {
         productStub = {
             activeData: {
-                salesVelocityWeek: null,
-                salesVelocityMonth: null
+                salesVelocityWeek: 1,
+                salesVelocityMonth: 1
             },
             isVariant: () => false,
             isVariationGroup: () => false,
@@ -72,18 +72,19 @@ describe('Dynamic Caching', () => {
                 isMaster: () => true,
                 availabilityModel: {
                     isOrderable: () => true,
-                    timeToOutOfStock: 12
+                    timeToOutOfStock: 12,
+                    SKUCoverage: 0.8
                 },
                 activeData: {
-                    salesVelocityWeek: null,
-                    salesVelocityMonth: null
+                    salesVelocityWeek: 1,
+                    salesVelocityMonth: 1
                 }
             }
         };
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(productStub.variationModel.master.availabilityModel.timeToOutOfStock);
+        expect(result).to.equal(9);
     });
 
     it('should return the information from the master if the product is a "Variation Group".', () => {
@@ -93,7 +94,8 @@ describe('Dynamic Caching', () => {
                 isMaster: () => true,
                 availabilityModel: {
                     isOrderable: () => true,
-                    timeToOutOfStock: 15
+                    timeToOutOfStock: 15,
+                    SKUCoverage: 0.8
                 },
                 activeData: {
                     salesVelocityWeek: null,
@@ -104,7 +106,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(productStub.variationModel.master.availabilityModel.timeToOutOfStock);
+        expect(result).to.equal(10);
     });
 
     it('should return a value for a standard product when Active Data is available for the past month.', () => {

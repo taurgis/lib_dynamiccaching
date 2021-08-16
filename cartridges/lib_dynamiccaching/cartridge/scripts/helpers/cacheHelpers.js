@@ -8,20 +8,22 @@ var FALLBACK_CACHE_TIME = oDynamicCacheConfig.inventoryLevelsChangeOften ? oDyna
  * the past week and month active data.
  *
  * @param {dw.catalog.Product} dwProduct - The product to determine the cache timing off.
+ * @param {dw.catalog.ProductInventoryRecord} oInventoryRecord - The inventory record to use
  *
  * @returns {null|number} - The amount of hours to cache a page or component related to the product
  */
-function calculateWeekAndMonthBasedCacheTime(dwProduct) {
-    var nSalesVelocityWeek = (dwProduct.activeData.salesVelocityWeek / (oDynamicCacheConfig.activeHoursInDay / 24))
-        * oDynamicCacheConfig.modifiers.week;
-    var nSalesVelocityMonth = (dwProduct.activeData.salesVelocityMonth / (oDynamicCacheConfig.activeHoursInDay / 24))
-        * oDynamicCacheConfig.modifiers.month;
+function calculateWeekAndMonthBasedCacheTime(dwProduct, oInventoryRecord) {
+    if (!oInventoryRecord) return null;
+
+    // Take into account the amount of products that are sold out, this will increase the Sales Velocity (possibly).
+    var nSKUCoverage = dwProduct.isMaster() ? dwProduct.availabilityModel.SKUCoverage : 1;
+
+    var nSalesVelocityWeek = ((dwProduct.activeData.salesVelocityWeek / (oDynamicCacheConfig.activeHoursInDay / 24))
+        * oDynamicCacheConfig.modifiers.week) / nSKUCoverage;
+    var nSalesVelocityMonth = ((dwProduct.activeData.salesVelocityMonth / (oDynamicCacheConfig.activeHoursInDay / 24))
+        * oDynamicCacheConfig.modifiers.month) / nSKUCoverage;
 
     if (!nSalesVelocityWeek || !nSalesVelocityMonth) return null;
-
-    var oInventoryRecord = dwProduct.availabilityModel.inventoryRecord;
-
-    if (!oInventoryRecord) return null;
 
     var nATS = oInventoryRecord.ATS;
     var nExpectedUnitsSoldPerHour = (nSalesVelocityWeek + nSalesVelocityMonth) / 2;
@@ -50,7 +52,7 @@ function calculateProductCacheTime(dwProduct) {
         return FALLBACK_CACHE_TIME;
     }
 
-    var dwAvailabilityModel = dwProductToUse.availabilityModel;
+    var dwAvailabilityModel = dwProduct.availabilityModel;
     var iTimeToOutOfStock = dwAvailabilityModel.timeToOutOfStock / oDynamicCacheConfig.modifiers.day;
 
     /**
@@ -65,10 +67,11 @@ function calculateProductCacheTime(dwProduct) {
      * Calculate the time we should cache based on the Active Data
      */
     var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
+
     /**
-     * Calculate on the long term on the passed product to get a good mix if we are working with variants.
+     * Calculate on the long term on the passed product to get a good mix.
      */
-    var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProduct);
+    var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProductToUse, dwAvailabilityModel.inventoryRecord);
 
     if (nTimeToCacheBasedOnLongerTimePeriod) {
         var nAverageTimeToCache = Math.floor((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2);
