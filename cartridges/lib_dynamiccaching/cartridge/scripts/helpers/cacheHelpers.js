@@ -23,7 +23,6 @@ function isInfluencedByPromotions(oProduct) {
             if (dPromotionStartDate.getFullYear() === dCurrentDate.getFullYear()
                 && dPromotionStartDate.getMonth() === dCurrentDate.getMonth()
                 && dPromotionStartDate.getDate() === dCurrentDate.getDate()) {
-
                 return true;
             }
         }
