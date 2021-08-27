@@ -51,13 +51,13 @@ describe('Dynamic Caching', () => {
     it('should return the fallback value if no product is passed.', () => {
         const result = cacheHelpers.calculateProductCacheTime(null);
 
-        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME);
+        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME * 60);
     });
 
     it('should return a value for a standard product.', () => {
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(productStub.availabilityModel.timeToOutOfStock);
+        expect(result).to.equal(productStub.availabilityModel.timeToOutOfStock * 60);
     });
 
     it('should round down if a decimal value is returned.', () => {
@@ -65,7 +65,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(10);
+        expect(result).to.equal(10 * 60);
     });
 
     it('should take into account promotions.', () => {
@@ -76,7 +76,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(5);
+        expect(result).to.equal(5 * 60);
     });
 
     it('should not take into account promotions that did not start today.', () => {
@@ -87,7 +87,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(10);
+        expect(result).to.equal(10 * 60);
     });
 
     it('should return the fallback value if the "Time To Out Of Stock" is 0.', () => {
@@ -95,7 +95,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME);
+        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME * 60);
     });
 
     it('should return the fallback value if the product is no longer available to order.', () => {
@@ -103,7 +103,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME);
+        expect(result).to.equal(cacheHelpers.FALLBACK_CACHE_TIME * 60);
     });
 
     it('should return the information from the master if the product is a "Variant".', () => {
@@ -125,7 +125,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(9);
+        expect(result).to.equal(9 * 60);
     });
 
     it('should return the information from the master if the product is a "Variation Group".', () => {
@@ -147,7 +147,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(10);
+        expect(result).to.equal(10 * 60);
     });
 
     it('should return a value for a standard product when Active Data is available for the past month.', () => {
@@ -158,7 +158,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(10);
+        expect(result).to.equal(10 * 60);
     });
 
     it('should return the maximum value if the calculated value is higher.', () => {
@@ -169,7 +169,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime * 60);
     });
 
     it('should return the minimum value if the calculated hours is lower the minimum.', () => {
@@ -182,7 +182,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.minCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.minCacheTime * 60);
     });
 
     it('should not use the custom week & month calculation if the inventory record is missing.', () => {
@@ -195,7 +195,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(productStub.availabilityModel.timeToOutOfStock);
+        expect(result).to.equal(productStub.availabilityModel.timeToOutOfStock * 60);
     });
 
     it('Scenario: Low Sales with high stock.', () => {
@@ -214,7 +214,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime);
+        expect(result).to.equal(oDynamicCacheConfig.maxCacheTime * 60);
     });
 
     it('Scenario: High Sales with high stock.', () => {
@@ -233,7 +233,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(5);
+        expect(result).to.equal(5 * 60);
     });
 
     it('Scenario: High Sales with low stock.', () => {
@@ -252,7 +252,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(1);
+        expect(result).to.equal(30);
     });
 
     it('Scenario: Low Sales with low stock.', () => {
@@ -271,7 +271,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(17);
+        expect(result).to.equal(17 * 60);
     });
 
     it('Scenario: Medium Sales with low stock.', () => {
@@ -290,7 +290,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(4);
+        expect(result).to.equal(4 * 60);
     });
 
     it('Scenario: Medium Sales with medium stock.', () => {
@@ -309,7 +309,7 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(23);
+        expect(result).to.equal(23 * 60);
     });
 
     it('Scenario: Medium Sales with high stock.', () => {
@@ -328,6 +328,6 @@ describe('Dynamic Caching', () => {
 
         const result = cacheHelpers.calculateProductCacheTime(productStub);
 
-        expect(result).to.equal(24);
+        expect(result).to.equal(24 * 60);
     });
 });

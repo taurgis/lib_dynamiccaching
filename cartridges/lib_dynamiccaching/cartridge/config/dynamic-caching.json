@@ -1,7 +1,7 @@
 {
   "inventoryLevelsChangeOften": false,
   "activeHoursInDay": 14,
-  "minCacheTime": 1,
+  "minCacheTime": 0.5,
   "maxCacheTime": 24,
   "promotionInfluence": 0.5,
   "modifiers": {

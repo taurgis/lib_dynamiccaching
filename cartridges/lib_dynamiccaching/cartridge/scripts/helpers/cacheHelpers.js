@@ -69,7 +69,7 @@ function calculateWeekAndMonthBasedCacheTime(dwProduct, oInventoryRecord) {
 function calculateProductCacheTime(dwProduct) {
     // If no product is passed, return the fallback cache time
     if (!dwProduct) {
-        return FALLBACK_CACHE_TIME;
+        return FALLBACK_CACHE_TIME * 60;
     }
 
     var dwProductToUse = (dwProduct.isVariant() || dwProduct.isVariationGroup())
@@ -77,7 +77,7 @@ function calculateProductCacheTime(dwProduct) {
 
     // If for some reason the product is not available, return the fallback cache time
     if (!dwProductToUse) {
-        return FALLBACK_CACHE_TIME;
+        return FALLBACK_CACHE_TIME * 60;
     }
 
     var dwAvailabilityModel = dwProduct.availabilityModel;
@@ -88,7 +88,7 @@ function calculateProductCacheTime(dwProduct) {
      * fall back to default values.
      */
     if (!dwAvailabilityModel.isOrderable() || (iTimeToOutOfStock === 0)) {
-        return FALLBACK_CACHE_TIME;
+        return FALLBACK_CACHE_TIME * 60;
     }
 
     /**
@@ -105,10 +105,10 @@ function calculateProductCacheTime(dwProduct) {
     if (nTimeToCacheBasedOnLongerTimePeriod) {
         var nAverageTimeToCache = Math.floor(((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2) * nPromotionInfluence);
 
-        return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache));
+        return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache)) * 60;
     }
 
-    return nTimeToCacheBasedOnPreviousDay * nPromotionInfluence;
+    return (nTimeToCacheBasedOnPreviousDay * nPromotionInfluence) * 60;
 }
 
 module.exports = {

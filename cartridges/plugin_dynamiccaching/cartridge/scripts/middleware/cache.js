@@ -17,16 +17,16 @@ base.applyDynamicInventorySensitiveCache = function (req, res, next) {
 
     if (oProduct) {
         var dwProduct = oProduct.raw;
-        var hoursToCache = cacheHelpers.calculateProductCacheTime(dwProduct);
+        var nMinutesToCache = cacheHelpers.calculateProductCacheTime(dwProduct);
 
-        res.cachePeriod = hoursToCache;
-        res.cachePeriodUnit = 'hours';
+        res.cachePeriod = nMinutesToCache;
+        res.cachePeriodUnit = 'minutes';
         res.personalizedByPricePromotion = true;
 
-        res.getViewData().calculatedCacheHours = hoursToCache;
+        res.getViewData().calculatedCacheMinutes = nMinutesToCache;
     }
 
-    res.getViewData().calculatedCacheHoursPerformanceImpact = new Date() - start;
+    res.getViewData().calculatedCachePerformanceImpact = new Date() - start;
 
     next();
 };
