@@ -5,7 +5,7 @@
 This is the repository for the lib_dynamiccaching plugin. This plugin adds dynamic page caching, including
 the following capabilities:
 
-* Dynamic stock based cache timings, based on Active Data (Sales Velocity)
+* Dynamic stock based cache timings, based on Active Data (Sales Velocity) (PDP & Lister Page)
 
 ![Sales Velocity](docs/salesvelocity.png)
 
@@ -92,6 +92,13 @@ By default, all periods in Active Data carry the same weight in the calculation.
 The product details page has only been overwritten to add a data-attribute on the main `<div>` for debugging purposes.
 
 ![Cache debugging](docs/img.png)
+
+# Custom Cache
+A custom cache is used to improve performance when filtering, sorting, ... on search results. 
+
+**_An added advantage:_** When a product is viewed on search results first, the cache timing for the PDP will already have been calculated and cached!
+
+![img.png](docs/customcache.png)
 
 # Release management
 
