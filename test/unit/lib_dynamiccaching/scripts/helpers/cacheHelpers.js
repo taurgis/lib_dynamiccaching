@@ -7,6 +7,15 @@ require('app-module-path').addPath(process.cwd() + '/cartridges');
 const lPromotions =  [];
 
 const cacheHelpers = proxyquire('lib_dynamiccaching/cartridge/scripts/helpers/cacheHelpers', {
+    'dw/system/CacheMgr': {
+        getCache: () => {
+            return {
+                get: (key, callback) => {
+                    return callback();
+                }
+            }
+        }
+    },
     'dw/campaign/PromotionMgr': {
         getActivePromotions: () => {
             return {

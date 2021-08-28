@@ -64,7 +64,7 @@ function calculateWeekAndMonthBasedCacheTime(dwProduct, oInventoryRecord) {
  *
  * @param {dw.catalog.Product} dwProduct - The product to determine the cache timing off.
  *
- * @returns {number} - The amount of hours to cache a page or component related to the product
+ * @returns {number|Object} - The amount of hours to cache a page or component related to the product
  */
 function calculateProductCacheTime(dwProduct) {
     // If no product is passed, return the fallback cache time
@@ -80,38 +80,76 @@ function calculateProductCacheTime(dwProduct) {
         return FALLBACK_CACHE_TIME * 60;
     }
 
-    var dwAvailabilityModel = dwProduct.availabilityModel;
-    var iTimeToOutOfStock = dwAvailabilityModel.timeToOutOfStock / oDynamicCacheConfig.modifiers.day;
+    var dwCache = require('dw/system/CacheMgr').getCache('dynamicCaching');
 
-    /**
-     * If the product is not available for ordering or the time to out of stock is incalculable or 0,
-     * fall back to default values.
-     */
-    if (!dwAvailabilityModel.isOrderable() || (iTimeToOutOfStock === 0)) {
+    return dwCache.get(dwProductToUse.ID, function () {
+        var dwAvailabilityModel = dwProduct.availabilityModel;
+        var iTimeToOutOfStock = dwAvailabilityModel.timeToOutOfStock / oDynamicCacheConfig.modifiers.day;
+
+        /**
+         * If the product is not available for ordering or the time to out of stock is incalculable or 0,
+         * fall back to default values.
+         */
+        if (!dwAvailabilityModel.isOrderable() || (iTimeToOutOfStock === 0)) {
+            return FALLBACK_CACHE_TIME * 60;
+        }
+
+        /**
+         * Calculate the time we should cache based on the Active Data
+         */
+        var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
+
+        /**
+         * Calculate on the long term on the passed product to get a good mix.
+         */
+        var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProductToUse, dwAvailabilityModel.inventoryRecord);
+        var nPromotionInfluence = isInfluencedByPromotions(dwProductToUse) ? oDynamicCacheConfig.promotionInfluence : 1;
+
+        if (nTimeToCacheBasedOnLongerTimePeriod) {
+            var nAverageTimeToCache = Math.floor(((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2) * nPromotionInfluence);
+
+            return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache)) * 60;
+        }
+
+        return (nTimeToCacheBasedOnPreviousDay * nPromotionInfluence) * 60;
+    });
+}
+
+/**
+ * Calculate the optimal time the search results can be cached based on inventory level and purchase history.
+ *
+ * @param {{productIds : List}} oProductSearchModel - Product search object
+ *
+ * @returns {number} - The amount of hours to cache a page or component related to the search results.
+ */
+function calculateSearchCacheTime(oProductSearchModel) {
+    // If no search result is passed, return the fallback cache time
+    if (!oProductSearchModel) {
         return FALLBACK_CACHE_TIME * 60;
     }
 
-    /**
-     * Calculate the time we should cache based on the Active Data
-     */
-    var nTimeToCacheBasedOnPreviousDay = Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, Math.floor(iTimeToOutOfStock)));
+    var nCalculatedCacheTime = oDynamicCacheConfig.maxCacheTime * 60;
+    var lProductIDs = oProductSearchModel.productIds;
 
-    /**
-     * Calculate on the long term on the passed product to get a good mix.
-     */
-    var nTimeToCacheBasedOnLongerTimePeriod = calculateWeekAndMonthBasedCacheTime(dwProductToUse, dwAvailabilityModel.inventoryRecord);
-    var nPromotionInfluence = isInfluencedByPromotions(dwProductToUse) ? oDynamicCacheConfig.promotionInfluence : 1;
+    // eslint-disable-next-line no-plusplus
+    for (var i = 0, j = lProductIDs.length; i < j; i++) {
+        var dwSearchHit = lProductIDs[i].productSearchHit;
+        var dwProduct = dwSearchHit.product;
 
-    if (nTimeToCacheBasedOnLongerTimePeriod) {
-        var nAverageTimeToCache = Math.floor(((nTimeToCacheBasedOnPreviousDay + nTimeToCacheBasedOnLongerTimePeriod) / 2) * nPromotionInfluence);
+        if (dwProduct) {
+            var nProductCacheTime = calculateProductCacheTime(dwProduct);
 
-        return Math.min(oDynamicCacheConfig.maxCacheTime, Math.max(oDynamicCacheConfig.minCacheTime, nAverageTimeToCache)) * 60;
+            if (nProductCacheTime < nCalculatedCacheTime) {
+                nCalculatedCacheTime = nProductCacheTime;
+            }
+        }
     }
 
-    return (nTimeToCacheBasedOnPreviousDay * nPromotionInfluence) * 60;
+    return nCalculatedCacheTime;
 }
 
 module.exports = {
+    calculateSearchCacheTime: calculateSearchCacheTime,
     calculateProductCacheTime: calculateProductCacheTime,
     FALLBACK_CACHE_TIME: FALLBACK_CACHE_TIME
 };

@@ -1,0 +1,8 @@
+{
+  "caches": [
+    {
+      "id": "dynamicCaching",
+      "expireAfterSeconds": 1800
+    }
+  ]
+}

@@ -10,20 +10,30 @@ var base = module.superModule;
  * @param {Function} next - Next call in the middleware chain.
  */
 base.applyDynamicInventorySensitiveCache = function (req, res, next) {
+    var { calculateProductCacheTime, calculateSearchCacheTime } = require('*/cartridge/scripts/helpers/cacheHelpers');
     var start = new Date();
-
-    var cacheHelpers = require('*/cartridge/scripts/helpers/cacheHelpers');
     var oProduct = res.getViewData().product;
+    var oProductSearch = res.getViewData().productSearch;
 
     if (oProduct) {
         var dwProduct = oProduct.raw;
-        var nMinutesToCache = cacheHelpers.calculateProductCacheTime(dwProduct);
+        var nMinutesToCacheProduct = calculateProductCacheTime(dwProduct);
 
-        res.cachePeriod = nMinutesToCache;
+        res.cachePeriod = nMinutesToCacheProduct;
         res.cachePeriodUnit = 'minutes';
         res.personalizedByPricePromotion = true;
 
-        res.getViewData().calculatedCacheMinutes = nMinutesToCache;
+        res.getViewData().calculatedCacheMinutes = nMinutesToCacheProduct;
+    }
+
+    if (oProductSearch) {
+        var nMinutesToCacheSearch = calculateSearchCacheTime(oProductSearch);
+
+        res.cachePeriod = nMinutesToCacheSearch;
+        res.cachePeriodUnit = 'minutes';
+        res.personalizedByPricePromotion = true;
+
+        res.getViewData().calculatedCacheMinutes = nMinutesToCacheSearch;
     }
 
     res.getViewData().calculatedCachePerformanceImpact = new Date() - start;

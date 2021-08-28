@@ -1,0 +1,12 @@
+<isdecorate template="common/layout/page">
+    <isscript>
+        var assets = require('*/cartridge/scripts/assets');
+        assets.addJs('/js/search.js');
+        assets.addCss('/css/search.css');
+    </isscript>
+    <meta  data-calculatedcachehours="${pdict.calculatedCacheMinutes / 60}"
+           data-calculatedcacheminutes="${pdict.calculatedCacheMinutes}"
+           data-calculatedCacheperformanceimpact="${pdict.calculatedCachePerformanceImpact}ms"
+    />
+    <isinclude template="search/searchResultsNoDecorator" />
+</isdecorate>
